@@ -20,7 +20,7 @@ void unlock(std::atomic<int>& m) {
 
 void phil(int ph, std::atomic<int>& ma, std::atomic<int>& mb) {
   
-  int duration=myrand(1000, 2000);
+   int duration=myrand(1000, 2000);
   std::this_thread::sleep_for(std::chrono::milliseconds(duration));
   std::cout<<ph<<" thinks "<<duration<<"ms\n";
 
@@ -31,7 +31,7 @@ void phil(int ph, std::atomic<int>& ma, std::atomic<int>& mb) {
 
   lock(mb);
   std::cout<<"\t\t"<<ph<<" got fork " << " mb " <<"\n";
-  
+
   duration=myrand(1000, 2000);
   std::this_thread::sleep_for(std::chrono::milliseconds(duration));
   std::cout<<"\t\t\t\t"<<ph<<" eats "<<duration<<"ms\n";
@@ -50,7 +50,7 @@ int main() {
   std::thread t1([&] {phil(1, m1, m2);});
   std::thread t2([&] {phil(2, m2, m3);});
   std::thread t3([&] {phil(3, m3, m4);});
-  std::thread t4([&] {phil(4, m1, m1);});
+  std::thread t4([&] {phil(4, m1, m4);});
 
   t1.join();
   t2.join();
