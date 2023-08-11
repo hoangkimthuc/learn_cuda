@@ -8,7 +8,7 @@ typedef struct {
     float* elements;
 } Matrix;
 // Thread block size
-#define BLOCK_SIZE 16
+#define BLOCK_SIZE 32
 // Get a matrix element
 __device__ float GetElement(const Matrix A, int row, int col)
 {
@@ -33,8 +33,7 @@ __device__ void SetElement(Matrix A, int row, int col,
                                          + BLOCK_SIZE * col];
     return Asub;
 }
-// Thread block size
-#define BLOCK_SIZE 16
+
 // Forward declaration of the matrix multiplication kernel
 __global__ void MatMulKernel(const Matrix, const Matrix, Matrix);
 // Matrix multiplication - Host code
@@ -120,12 +119,12 @@ void MatMul(const Matrix A, const Matrix B, Matrix C)
 int main()
 {
     Matrix A, B, C;
-    A.width = 32;
-    A.height = 32;
-    B.width = 32;
-    B.height = 32;
-    C.width = 32;
-    C.height = 32;
+    A.width = 2048;
+    A.height = 2048;
+    B.width = 2048;
+    B.height = 2048;
+    C.width = 2048;
+    C.height = 2048;
     A.elements = (float*)malloc(A.width * A.height * sizeof(float));
     B.elements = (float*)malloc(B.width * B.height * sizeof(float));
     C.elements = (float*)malloc(C.width * C.height * sizeof(float));
@@ -135,9 +134,9 @@ int main()
         B.elements[i] = 2;
     }
     MatMul(A, B, C);
-    for (int i = 0; i < C.width * C.height; i++)
-    {
-        printf("%f ", C.elements[i]);
-    }
-    printf("\n");
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     printf("%f ", C.elements[i]);
+    // }
+    // printf("\n");
 }
