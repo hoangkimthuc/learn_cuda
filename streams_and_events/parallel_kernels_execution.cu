@@ -11,7 +11,7 @@ __global__ void myKernel(float* data, int size) {
 }
 
 int main() {
-    const int size = 65536;
+    const int size = 1024;
     cudaStream_t stream[2];
     for (int i = 0; i < 2; ++i)
         cudaStreamCreate(&stream[i]);
@@ -25,13 +25,6 @@ int main() {
 
     cudaMalloc(&devicePtr1, size * sizeof(float));
     cudaMalloc(&devicePtr2, size * sizeof(float));
-    // Initialize hostPtr
-    // for (int i = 0; i < size; ++i){    
-    //     hostPtr1[i] = i;
-    //     hostPtr2[i] = i;
-    //     cout<<"hostPtr1["<<i<<"]"<<hostPtr1[i]<<endl;
-    //     cout<<"hostPtr2["<<i<<"]"<<hostPtr2[i]<<endl;
-    // }
 
     // Copy hostPtr to devicePtr asynchronously
     cudaMemcpyAsync(devicePtr1, hostPtr1, size * sizeof(float), cudaMemcpyHostToDevice, stream[0]);
@@ -40,9 +33,11 @@ int main() {
     int blockSize = 32;
     int numBlocks = (size + blockSize - 1) / blockSize;
     myKernel<<<numBlocks, blockSize, 0, stream[0]>>>(devicePtr1, size);
-    myKernel<<<numBlocks, blockSize, 0, stream[1]>>>(devicePtr2, size);
-    // Copy devicePtr back to hostPtr asynchronously
+    myKernel<<<numBlocks, blockSize, 0, stream[0]>>>(devicePtr1, size);
     cudaMemcpyAsync(hostPtr1, devicePtr1, size * sizeof(float), cudaMemcpyDeviceToHost, stream[0]);
+    
+    myKernel<<<numBlocks, blockSize, 0, stream[1]>>>(devicePtr2, size);
+    // Copy devicePtr back to hostPtr asynchronously   
     cudaMemcpyAsync(hostPtr2, devicePtr2, size * sizeof(float), cudaMemcpyDeviceToHost, stream[1]);
     // Wait for all operations to complete
     cudaStreamSynchronize(stream[0]);

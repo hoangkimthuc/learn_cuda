@@ -119,12 +119,12 @@ void MatMul(const Matrix A, const Matrix B, Matrix C)
 int main()
 {
     Matrix A, B, C;
-    A.width = 2048;
-    A.height = 2048;
-    B.width = 2048;
-    B.height = 2048;
-    C.width = 2048;
-    C.height = 2048;
+    A.width = 256;
+    A.height = 256;
+    B.width = 256;
+    B.height = 256;
+    C.width = 256;
+    C.height = 256;
     A.elements = (float*)malloc(A.width * A.height * sizeof(float));
     B.elements = (float*)malloc(B.width * B.height * sizeof(float));
     C.elements = (float*)malloc(C.width * C.height * sizeof(float));
