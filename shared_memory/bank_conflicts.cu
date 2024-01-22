@@ -3,14 +3,15 @@
 
 #define BLOCK_SIZE 32
 #define STRIDE 2
-#define STEP 0
+
 template <typename T>
 __global__ void add(T *a) {
-    int tid = (blockIdx.x*blockDim.x + threadIdx.x)*STRIDE;
-    // __shared__ T cache[BLOCK_SIZE];
-    // cache[threadIdx.x] = a[tid];
-    // a[tid] = cache[threadIdx.x] + 1.0f;
-    a[tid] = a[tid] + 1.0f;
+    int global_tid = (blockIdx.x*blockDim.x + threadIdx.x);
+    int local_tid = (threadIdx.x);
+    __shared__ T shared_mem[BLOCK_SIZE*STRIDE]; 
+    shared_mem[local_tid*STRIDE] = a[global_tid]; // One bank conflict for coping data from global to shared memory
+    __syncthreads();
+    a[global_tid] = shared_mem[local_tid*STRIDE] + 1; // One bank conflict for reading data from shared memory
 }
 template <typename T>
 void runTest() {
